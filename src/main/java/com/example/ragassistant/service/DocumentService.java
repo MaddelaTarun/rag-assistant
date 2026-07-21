@@ -26,6 +26,9 @@ public class DocumentService {
     @Autowired
     private ChunkingService chunkingService;
 
+    @Autowired
+    private VectorStoreService vectorStoreService;
+
     private final String UPLOAD_DIR = "uploads/";
 
     public Document uploadDocument(MultipartFile file) throws Exception {
@@ -45,6 +48,8 @@ public class DocumentService {
         // Extract text from the uploaded document
         String extractedText = textExtractionService.extractText(filePath.toFile());
         List<String> chunks = chunkingService.createChunks(extractedText);
+
+        vectorStoreService.storeChunks(chunks, file.getOriginalFilename());
 
         System.out.println("Number of Chunks : " + chunks.size());
 
